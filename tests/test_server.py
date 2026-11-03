@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import pytest
+from mcp.server.mcpserver.exceptions import ToolError
 
 from image_generation_mcp.config import Config
 from image_generation_mcp.server import generate_image
@@ -28,20 +29,8 @@ class StubProvider:
 
 
 @pytest.fixture
-def stub(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, pixel_png: bytes) -> StubProvider:
+def stub(monkeypatch: pytest.MonkeyPatch, config: Config, pixel_png: bytes) -> StubProvider:
     provider = StubProvider(pixel_png)
-    config = Config(
-        gemini_api_key="k",
-        openai_api_key=None,
-        vercel_api_key=None,
-        provider=None,
-        gemini_model="m",
-        openai_model="m",
-        vercel_model="m",
-        out_dir=tmp_path / "out",
-        transport="stdio",
-        port=8000,
-    )
     monkeypatch.setattr("image_generation_mcp.server.load_config", lambda: config)
     monkeypatch.setattr("image_generation_mcp.server.select_provider", lambda _: provider)
     return provider
@@ -61,6 +50,6 @@ async def test_passes_reference_images(stub: StubProvider, pixel_file: Path) -> 
 
 
 async def test_invalid_aspect_ratio_raises(stub: StubProvider) -> None:
-    with pytest.raises(ValueError, match="Unsupported aspect_ratio"):
+    with pytest.raises(ToolError, match="ValueError: Unsupported aspect_ratio"):
         await generate_image("a cat", aspect_ratio="7:3")
     assert stub.calls == []

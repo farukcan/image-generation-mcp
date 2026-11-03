@@ -40,8 +40,8 @@ right there for the agent to open, move, or hand to another tool.
 - **Image-to-image.** Pass up to 4 reference images to restyle, edit, or combine them.
 - **Flexible inputs.** A reference can be a local path, an `http(s)` URL, a `data:` URI, or bare base64 — the server figures out which.
 - **Both transports.** stdio for local clients, streamable HTTP (localhost-bound) when you need a port.
-- **Honest errors.** No retries that mask a bad key, no silent provider fallback. When the API says 429, you see 429.
-- **Small enough to read.** ~620 lines of source, no file over 100 lines, strict-typed throughout.
+- **Honest errors.** No retries that mask a bad key, no silent provider fallback. When the API says 429, your agent sees 429 — every expected failure (input, config, provider, download) comes back as a tool error carrying the exception type and message.
+- **Small enough to read.** ~650 lines of source, no file over 100 lines, strict-typed throughout.
 
 ## Prerequisites
 
@@ -207,7 +207,7 @@ rather than rebuilt every request.
 | | Gemini | OpenAI | Vercel AI Gateway |
 | --- | --- | --- | --- |
 | API | Interactions (`client.aio.interactions.create`) | Images (`images.generate` / `images.edit`) | OpenAI-compatible Images at `https://ai-gateway.vercel.sh/v1` |
-| SDK floor | `google-genai >= 2.3.0` | `openai >= 3.0.0` | `openai >= 3.0.0` |
+| SDK floor | `google-genai >= 2.9.0` | `openai >= 3.0.0` | `openai >= 3.0.0` |
 | Reference images | Sent inline as base64 parts | Uploaded as multipart files | Uploaded as multipart files (PNG, JPEG, GIF, BMP, or WebP); the gateway rejects what the model cannot take |
 | Output format | Whatever the model returns — the extension follows it | Always PNG (`output_format="png"`) | Whatever the model returns (JPEG, PNG, WebP), read from the bytes |
 
