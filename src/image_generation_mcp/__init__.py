@@ -1,1 +1,1 @@
-"""Minimal MCP server that generates images with Gemini or OpenAI."""
+"""Minimal MCP server that generates images with Gemini, OpenAI, or Vercel AI Gateway."""

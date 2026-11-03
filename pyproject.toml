@@ -1,12 +1,12 @@
 [project]
 name = "image-generation-mcp"
 version = "0.1.0"
-description = "Minimal MCP server that generates images with Gemini or OpenAI."
+description = "Minimal MCP server that generates images with Gemini, OpenAI, or Vercel AI Gateway."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Ömer Faruk Can", email = "omer@farukcan.net" }]
-keywords = ["mcp", "model-context-protocol", "image-generation", "gemini", "openai"]
+keywords = ["mcp", "model-context-protocol", "image-generation", "gemini", "openai", "vercel", "ai-gateway"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",

@@ -6,6 +6,7 @@ from .config import Config
 from .gemini_provider import GeminiProvider
 from .openai_provider import OpenAIProvider
 from .types import ImageProvider
+from .vercel_provider import VercelProvider
 
 
 @lru_cache(maxsize=4)
@@ -23,8 +24,16 @@ def select_provider(config: Config) -> ImageProvider:
         if config.openai_api_key is None:
             raise RuntimeError("IMAGE_PROVIDER=openai but OPENAI_API_KEY is not set")
         return OpenAIProvider(config.openai_api_key, config.openai_model)
+    if config.provider == "vercel":
+        if config.vercel_api_key is None:
+            raise RuntimeError("IMAGE_PROVIDER=vercel but AI_GATEWAY_API_KEY is not set")
+        return VercelProvider(config.vercel_api_key, config.vercel_model)
     if config.gemini_api_key is not None:
         return GeminiProvider(config.gemini_api_key, config.gemini_model)
     if config.openai_api_key is not None:
         return OpenAIProvider(config.openai_api_key, config.openai_model)
-    raise RuntimeError("No API key configured; set GEMINI_API_KEY and/or OPENAI_API_KEY")
+    if config.vercel_api_key is not None:
+        return VercelProvider(config.vercel_api_key, config.vercel_model)
+    raise RuntimeError(
+        "No API key configured; set GEMINI_API_KEY, OPENAI_API_KEY and/or AI_GATEWAY_API_KEY"
+    )

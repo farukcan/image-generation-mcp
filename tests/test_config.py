@@ -4,14 +4,16 @@ from pathlib import Path
 
 import pytest
 
-from image_generation_mcp.config import DEFAULT_GEMINI_MODEL, load_config
+from image_generation_mcp.config import DEFAULT_GEMINI_MODEL, DEFAULT_VERCEL_MODEL, load_config
 
 ENV_VARS = (
     "GEMINI_API_KEY",
     "OPENAI_API_KEY",
+    "AI_GATEWAY_API_KEY",
     "IMAGE_PROVIDER",
     "GEMINI_IMAGE_MODEL",
     "OPENAI_IMAGE_MODEL",
+    "VERCEL_IMAGE_MODEL",
     "OUT_DIR",
     "MCP_TRANSPORT",
     "MCP_PORT",
@@ -44,6 +46,21 @@ def test_overrides(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     assert config.out_dir == tmp_path.resolve()
     assert config.transport == "http"
     assert config.port == 9001
+
+
+def test_vercel_key_alone_is_enough(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("AI_GATEWAY_API_KEY", "k")
+    monkeypatch.setenv("IMAGE_PROVIDER", "vercel")
+    config = load_config()
+    assert config.vercel_api_key == "k"
+    assert config.provider == "vercel"
+    assert config.vercel_model == DEFAULT_VERCEL_MODEL
+
+
+def test_vercel_model_override(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("AI_GATEWAY_API_KEY", "k")
+    monkeypatch.setenv("VERCEL_IMAGE_MODEL", "spacexai/grok-imagine-image")
+    assert load_config().vercel_model == "spacexai/grok-imagine-image"
 
 
 def test_no_api_key_raises() -> None:

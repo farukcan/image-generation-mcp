@@ -29,6 +29,14 @@ def _reference_file(index: int, part: ImagePart) -> tuple[str, bytes, str]:
     return (f"reference-{index}.{extension}", part.data, part.mime_type)
 
 
+def decode_first_image(label: str, response: ImagesResponse) -> bytes:
+    """Decode the first base64 image of an Images API response, or raise with the full body."""
+    payload = response.data[0].b64_json if response.data else None
+    if not payload:
+        raise RuntimeError(f"{label} returned no image data: {response.model_dump_json()}")
+    return base64.b64decode(payload)
+
+
 class OpenAIProvider:
     """Connector to the OpenAI Images API."""
 
@@ -63,10 +71,4 @@ class OpenAIProvider:
                 output_format=OUTPUT_FORMAT,
                 n=1,
             )
-        return GeneratedImage(data=self._extract(response), mime_type="image/png")
-
-    def _extract(self, response: ImagesResponse) -> bytes:
-        payload = response.data[0].b64_json if response.data else None
-        if not payload:
-            raise RuntimeError(f"{self.label} returned no image data: {response.model_dump_json()}")
-        return base64.b64decode(payload)
+        return GeneratedImage(data=decode_first_image(self.label, response), mime_type="image/png")

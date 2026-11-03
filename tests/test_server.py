@@ -33,9 +33,11 @@ def stub(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, pixel_png: bytes) -> S
     config = Config(
         gemini_api_key="k",
         openai_api_key=None,
+        vercel_api_key=None,
         provider=None,
         gemini_model="m",
         openai_model="m",
+        vercel_model="m",
         out_dir=tmp_path / "out",
         transport="stdio",
         port=8000,
